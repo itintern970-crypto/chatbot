@@ -1,0 +1,51 @@
+isplay content from a secure website by pasting the web address of the site below. If that doesn't work, try pasting the embed code from the site instead. Embed code must be iframe-based. Script tags are not supported.
+You can also connect to a list or library to dynamically change your embed code by selecting the ellipses (…) and Connect to source.
+Website address or embed code
+<div style="max-width:600px;margin:auto;font-family:Arial;">
+    <h2>AI Chatbot</h2>
+    <div id="chatBox" style="height:300px;overflow-y:auto;border:1px solid #ccc;padding:10px;border-radius:8px;">
+        <p><b>Bot:</b> Hi! How can I help you today?</p>
+    </div>
+
+    <input id="userInput" type="text" placeholder="Type your message..." 
+           style="width:100%;padding:10px;margin-top:10px;border-radius:6px;border:1px solid #aaa;">
+
+    <button onclick="sendMessage()" 
+            style="margin-top:10px;padding:10px 15px;border:none;background:#0078d4;color:#fff;border-radius:6px;">
+        Send
+    </button>
+</div>
+
+<script>
+const apiKey = "YOUR_GEMINI_API_KEY";  // 🔹 Replace with your API key
+
+async function sendMessage() {
+    let input = document.getElementById("userInput").value.trim();
+    if (!input) return;
+
+    let chatBox = document.getElementById("chatBox");
+    chatBox.innerHTML += `<p><b>You:</b> ${input}</p>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    document.getElementById("userInput").value = "";
+
+    // Gemini API call
+    const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: input }] }]
+            })
+        }
+    );
+
+    let data = await response.json();
+    let reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I didn't understand that.";
+
+    chatBox.innerHTML += `<p><b>Bot:</b> ${reply}</p>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+</script>
+This embed code doesn't seem to work. We only support iframe based embeds.
